@@ -7,10 +7,10 @@ import com.novus.salat.{TypeHintFrequency, StringTypeHintStrategy, Context}
 import play.api.Play
 import play.api.Play.current
 
-object mongoContext2 {
+package object mongoContext {
   implicit val context = {
     val context = new Context {
-      val name = "global"
+      val name = "CustomContext"
       override val typeHintStrategy = StringTypeHintStrategy(when = TypeHintFrequency.WhenNecessary, typeHint = "_t")
     }
     context.registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")

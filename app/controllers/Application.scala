@@ -1,6 +1,7 @@
 package controllers
 
 import db.MongoConnection
+
 import play.api.mvc._
 import models.{Task, BotSession}
 
@@ -20,7 +21,9 @@ object Application extends Controller {
 ////      println(i.label)
 //    }
 
-    Task.all()
+    for (i <- Task.all()) {
+      println(i.label)
+    }
 
     Ok("Your new application is ready.")
   }
