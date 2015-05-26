@@ -11,5 +11,6 @@ libraryDependencies ++= Seq(
   anorm,
   cache,
   "org.mongodb" %% "casbah" % "2.8.1",
+  "com.novus" %% "salat" % "1.9.9",
   ws
 )
