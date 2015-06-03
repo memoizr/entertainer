@@ -7,25 +7,34 @@ import com.novus.salat._
 import org.bson.types.ObjectId
 import models.mongoContext._
 
-case class BotSession(authToken: String, _id: ObjectId = new ObjectId)
+case class BotSession(authToken: String,
+                      email: String,
+                      _id: ObjectId)
 
 object BotSession {
 
   val botSessionCollection = MongoFactory.database("bot_sessions")
 
-  def create(authToken: String, serverId: String): BotSession = {
-    val botSession = new BotSession(authToken, new ObjectId(serverId))
+  def create(authToken: String, email: String, serverId: String): BotSession = {
+    val botSession = new BotSession(authToken, email, new ObjectId(serverId))
     val dBObject = grater[BotSession] asDBObject botSession
-    botSessionCollection save(dBObject, WriteConcern Safe)
+    botSessionCollection save(dBObject, WriteConcern.Safe)
+
     grater[BotSession] asObject dBObject
   }
 
-  def get(serverId: String): Option[BotSession] = {
+  def get(serverId: ObjectId): Option[BotSession] = {
     val id = MongoDBObject("_id" -> serverId)
     val obj = botSessionCollection.findOne(id)
     obj match {
       case Some(x) => Some(grater[BotSession].asObject(x))
       case _ => None
     }
+  }
+
+  def all(): List[BotSession] = {
+    val results = botSessionCollection.find()
+    val sessions = for (item <- results) yield grater[BotSession].asObject(item)
+    sessions.toList
   }
 }
