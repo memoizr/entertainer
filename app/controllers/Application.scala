@@ -1,6 +1,7 @@
 package controllers
 
 import org.bson.types.ObjectId
+import jobs._
 import play.api.mvc._
 import models._
 import scala.util.Random
@@ -11,11 +12,6 @@ object Application extends Controller {
   val imageTypes = Array("jpg", "gif")
 
   def index = Action {
-
-    for (i <- Task.all()) {
-      println(i.label)
-    }
-
     Ok("Your new application is ready.")
   }
 
@@ -32,7 +28,20 @@ object Application extends Controller {
           .authToken)
       }
     }
+
     Ok("Post was created")
+  }
+
+  def startPostingJob = Action {
+
+    PosterJob.startJob()
+    Ok("Job started")
+  }
+
+  def cancelPostingJob = Action {
+
+    PosterJob.cancelJob()
+    Ok("Job cancelled")
   }
 
   def pickRandomUrl(): Option[CatUrl] = {
