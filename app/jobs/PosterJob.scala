@@ -24,7 +24,6 @@ object PosterJob {
       def receive = {
         case Tack => {
           if (running) {
-            Logger.warn("... 7 seconds after start, only once")
             WS.url("http://0.0.0.0:9000/create_post").get().map(r => println(r
               .body))
           }
@@ -32,7 +31,7 @@ object PosterJob {
       }
     }))
 
-    Akka.system.scheduler.schedule(0 seconds, 17 minutes,
+    Akka.system.scheduler.schedule(0 seconds, 7 seconds,
       tickActor, Tack)
   }
 }
