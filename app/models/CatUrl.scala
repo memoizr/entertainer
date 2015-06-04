@@ -31,17 +31,26 @@ object CatUrl {
     )
   }
 
-  def getRandom(category: String, imageType: String): CatUrl = {
-    val catUrl = urlCollection.findOne()
+  var limit = 0
+
+  def getRandom(category: String, imageType: String): Option[CatUrl] = {
+    val q = MongoDBObject("category" -> category, "imageType" -> imageType)
+    val catUrl = urlCollection.findOne(q)
     catUrl match {
       case Some(x) => {
-        val ret = grater[CatUrl].asObject(x)
+        val ret = Some(grater[CatUrl].asObject(x))
         urlCollection.remove(x)
         return ret
       }
       case _ => {
-        create(category, imageType, 10)
-        getRandom(category, imageType)
+        if (limit < 2) {
+          Thread sleep limit * 500 + 500
+          limit += 1
+          create(category, imageType, 20)
+          getRandom(category, imageType)
+        } else {
+          None
+        }
       }
     }
   }
@@ -62,8 +71,6 @@ object CatUrl {
       (request.xml \\ "url").toList.map(url => {
           CatUrl(url.text, imageType, category)
         }))
-
-
   }
 }
 
