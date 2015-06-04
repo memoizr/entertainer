@@ -32,6 +32,15 @@ object BotSession {
     }
   }
 
+  def getByEmail(email: String): Option[BotSession] = {
+    val id = MongoDBObject("email" -> email)
+    val obj = botSessionCollection.findOne(id)
+    obj match {
+      case Some(x) => Some(grater[BotSession].asObject(x))
+      case _ => None
+    }
+  }
+
   def all(): List[BotSession] = {
     val results = botSessionCollection.find()
     val sessions = for (item <- results) yield grater[BotSession].asObject(item)

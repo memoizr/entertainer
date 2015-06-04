@@ -5,18 +5,19 @@ import play.api.libs.ws.WS
 import config.Config._
 import play.api.Play.current
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 case class Login(email: String, password: String)
 
 object Login {
 
-  def loginAs(email: String, password: String): Unit = {
+  def loginAs(email: String, password: String): Future[BotSession] = {
 
     val encodedPassword = BaseEncoding.base64().encode(password.getBytes())
 
     val url = baseUrl + "/sessions/login"
 
-    val futureResult = WS.url(url).post(Map(
+    WS.url(url).post(Map(
       "email" -> Seq(email),
       "password" -> Seq(encodedPassword)
     )).map(response => {
@@ -28,8 +29,8 @@ object Login {
     })
   }
 
-  def createNewSession(authToken: String, email: String, serverId: String): Unit = {
+  def createNewSession(authToken: String, email: String, serverId: String): BotSession
+  = {
     BotSession.create(authToken, email, serverId)
   }
 }
-
