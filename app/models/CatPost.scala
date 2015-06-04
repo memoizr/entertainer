@@ -9,12 +9,13 @@ case class CatPost(imageUrl: String, category: String)
 
 object CatPost {
 
-  def createPost(imageUrl: String, category: String): Unit = {
+  def createPost(imageUrl: String, category: String, authToken: String): Unit
+  = {
 
-    val url = baseUrl + "/sessions/login"
+    val url = baseUrl + "/cat_post"
 
-    val futureResult = WS.url(url).post(Map(
-      "imageUrl" -> Seq(imageUrl),
+    val futureResult = WS.url(url).withHeaders("Auth-Token" -> authToken).post(Map(
+      "image_url" -> Seq(imageUrl),
       "category" -> Seq(category)
     )).map(response => {
       println(response.json)

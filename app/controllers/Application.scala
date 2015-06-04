@@ -2,7 +2,7 @@ package controllers
 
 import org.bson.types.ObjectId
 import play.api.mvc._
-import models.{CatPost, Login, Task, BotSession}
+import models._
 
 object Application extends Controller {
 
@@ -16,19 +16,19 @@ object Application extends Controller {
   }
 
   def createPost = Action {
+    val url = pickRandomUrl("space", "jpg")
     val serverId = "555c691c77d5166b8f000001"
     val botsession = BotSession.get(new ObjectId(serverId))
     if (botsession.isEmpty) {
       Login.loginAs("test@test.com", "testtest")
     } else {
+      CatPost.createPost(url.url, url.category, botsession.get.authToken)
       println("no")
-//      CatPost.createPost()
     }
     Ok("Post was created")
   }
 
-//  def pickRandomUrl(): String = {
-//
-//  }
-
+  def pickRandomUrl(category: String, imageType: String): CatUrl = {
+    CatUrl.getRandom(category, imageType)
+  }
 }
