@@ -4,7 +4,9 @@ import org.bson.types.ObjectId
 import jobs._
 import play.api.mvc._
 import models._
+import scala.concurrent.Await
 import scala.util.Random
+import scala.concurrent.duration._
 
 object Application extends Controller {
 
@@ -19,10 +21,11 @@ object Application extends Controller {
     println("start")
     val url = pickRandomUrl()
     if (!url.isEmpty) {
-      val serverId = "555c691c77d5166b8f000001"
-      val botsession = BotSession.get(new ObjectId(serverId))
+      val botsession = BotSession.getByEmail("b@b.com")
       if (botsession.isEmpty) {
-        Login.loginAs("test@test.com", "testtest")
+        val awaitable = Login.loginAs("b@b.com", "asdfghjkl")
+        val session = Await.result[BotSession](awaitable, 3 seconds)
+        CatPost.createPost(url.get.url, url.get.category, session.authToken)
       } else {
         CatPost.createPost(url.get.url, url.get.category, botsession.get
           .authToken)
